@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 const getDeviceData = asyncHandler(async (req, res) => {
     const { deviceId } = req.params;
     
-    const deviceData = await DeviceData.find({ _id: deviceId })
+    const deviceData = await DeviceData.find({ device: deviceId })
         .sort({ createdAt: -1 })
         .populate('device', 'deviceName');
 
