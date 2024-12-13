@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import userRoute from './routes/userRoute.js';
 import deviceRoutes from './routes/deviceRoute.js';
 import deviceDataRoutes from './routes/deviceDataRoute.js';
+import productRoutes from './routes/productRoutes.js';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/devices', deviceRoutes);
 app.use('/api/v1/device-data', deviceDataRoutes);
+app.use('/api/v1/products', productRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
