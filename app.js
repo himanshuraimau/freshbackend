@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-import userRoute from './routes/userRoute.js'; // Import userRoute
-import deviceRoutes from './routes/deviceRoute.js'; // Import deviceRoutes
+import userRoute from './routes/userRoute.js';
+import deviceRoutes from './routes/deviceRoute.js';
+import deviceDataRoutes from './routes/deviceDataRoute.js';
 
 const app = express();
 
@@ -16,9 +16,10 @@ app.get('/health', (_req, res) => {
     res.json({ status: 'healthy' });
 });
 
-// Routes
+// API Routes with consistent versioning
 app.use('/api/v1/users', userRoute);
-app.use('/api/devices', deviceRoutes);
+app.use('/api/v1/devices', deviceRoutes);
+app.use('/api/v1/device-data', deviceDataRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

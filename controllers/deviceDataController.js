@@ -1,16 +1,11 @@
 import DeviceData from '../models/deviceDataModel.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
-// Get all data for a specific device by ID or name
+// Get all data for a specific device by ID
 const getDeviceData = asyncHandler(async (req, res) => {
     const { deviceId } = req.params;
     
-    // Search by either device ID or device name
-    const query = isNaN(deviceId) 
-        ? { 'device.deviceName': deviceId }
-        : { device: deviceId };
-
-    const deviceData = await DeviceData.find(query)
+    const deviceData = await DeviceData.find({ device: deviceId })
         .sort({ createdAt: -1 })
         .populate('device', 'deviceName');
 
