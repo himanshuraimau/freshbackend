@@ -3,13 +3,13 @@ import Device from '../models/deviceModel.js';
 // Add a device to user's account
 export const addDevice = async (req, res) => {
     try {
-        const { deviceName, devicePassword } = req.body;
+        const { deviceName, password } = req.body;
         const userId = req.user._id; // Assuming you have user authentication middleware
 
         // Check if device exists in database with correct credentials
         const device = await Device.findOne({ 
             deviceName, 
-            devicePassword 
+            password 
         });
 
         if (!device) {

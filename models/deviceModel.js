@@ -5,7 +5,7 @@ const deviceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    devicePassword:{
+    password:{
         type: String,
         required: true,
     },
