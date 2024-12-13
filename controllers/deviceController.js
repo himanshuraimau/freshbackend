@@ -1,4 +1,5 @@
 import Device from '../models/deviceModel.js';
+import DeviceData from '../models/deviceDataModel.js';
 
 // Add a device to user's account
 export const addDevice = async (req, res) => {
@@ -59,6 +60,54 @@ export const getUserDevices = async (req, res) => {
         res.status(500).json({ 
             message: "Error fetching devices", 
             error: error.message 
+        });
+    }
+};
+
+// Get device status and latest data
+export const getDeviceStatus = async (req, res) => {
+    try {
+        const { deviceId } = req.params;
+        const userId = req.user._id;
+
+        const device = await Device.findOne({
+            _id: deviceId,
+            user: userId
+        });
+
+        if (!device) {
+            return res.status(404).json({
+                message: "Device not found or unauthorized"
+            });
+        }
+
+        const latestData = await DeviceData.findOne({ device: deviceId })
+            .sort({ createdAt: -1 });
+
+        // Update device status based on last active time
+        const now = new Date();
+        const lastActiveTime = latestData ? latestData.createdAt : device.lastActive;
+        const hoursSinceLastActive = (now - lastActiveTime) / (1000 * 60 * 60);
+
+        if (hoursSinceLastActive > 24) {
+            device.status = 'inactive';
+            await device.save();
+        }
+
+        res.status(200).json({
+            device: {
+                id: device._id,
+                deviceName: device.deviceName,
+                status: device.status,
+                lastActive: lastActiveTime
+            },
+            latestData
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching device status",
+            error: error.message
         });
     }
 };
