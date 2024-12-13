@@ -56,20 +56,33 @@ const userController = {
   login: async (req, res) => {
     const { email, phoneNumber, password } = req.body;
 
+    if (!password || !(email || phoneNumber)) {
+      return res.status(400).json({ 
+        message: 'Please provide password and either email or phone number.' 
+      });
+    }
+
     try {
-      // Check if user exists
-      const user = await User.findOne({ email, phoneNumber });
-      if (!user) {
-        return res.status(400).json({ message: 'Invalid email, phone number, or password.' });
+      // Find user by either email or phone number, but in separate queries
+      let user;
+      if (email) {
+        user = await User.findOne({ email });
+      } else if (phoneNumber) {
+        // Ensure phoneNumber is treated as a number if provided
+        user = await User.findOne({ phoneNumber: Number(phoneNumber) });
       }
 
-      // Compare passwords
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid credentials.' });
+      }
+
+     
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(400).json({ message: 'Invalid email, phone number, or password.' });
+        return res.status(400).json({ message: 'Invalid credentials.' });
       }
 
-      // Generate JWT
+      
       const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
         expiresIn: '1d',
       });
@@ -79,7 +92,7 @@ const userController = {
       console.error(error);
       return res.status(500).json({ message: 'Error logging in.' });
     }
-  },
+  }
 };
 
 export default userController;
