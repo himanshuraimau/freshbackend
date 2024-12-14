@@ -17,6 +17,10 @@ const deviceDataSchema = new mongoose.Schema({
 // Add index for faster queries
 deviceDataSchema.index({ device: 1, createdAt: -1 });
 
+// Add additional indexes for graph queries
+deviceDataSchema.index({ createdAt: 1 });
+deviceDataSchema.index({ device: 1, createdAt: 1 });
+
 const DeviceData = mongoose.model('DeviceData', deviceDataSchema);
 
 export default DeviceData;
